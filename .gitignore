@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+komiwojazer_dane/
+nowe_dane/
+
+main.cpp
+
 # User-specific files
 *.rsuser
 *.suo

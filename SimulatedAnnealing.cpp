@@ -9,10 +9,10 @@ SimulatedAnnealing::SimulatedAnnealing(Matrix* inputMatrix, int townAmount)
 {
     //defaults
     srand(time(NULL));
-    initalTemp = 100;
+    initalTemp = 10000;
     tempStop = 0.00000001;
-    tempChange = 0.9;
-    iterationTempChange = 10000;
+    tempChange = 0.995;
+    iterationTempChange = 20000;
 }
 
 SimulatedAnnealing::~SimulatedAnnealing()
