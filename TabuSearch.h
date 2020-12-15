@@ -6,6 +6,7 @@ class TabuSearch :
     
 private:
     int tabuLifetime;
+    int maxIterations;
 
     int* getBestNeighbour(int* currentPath, Matrix* tabuList);
     int getPathCost(int* currentPath);

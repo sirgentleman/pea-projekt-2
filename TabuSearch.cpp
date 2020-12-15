@@ -1,4 +1,16 @@
 #include "TabuSearch.h"
+#include <iostream>
+
+TabuSearch::TabuSearch(Matrix* inputMatrix, int townAmount)
+    : Algorithm(inputMatrix, townAmount)
+{
+    tabuLifetime = 100;
+}
+
+TabuSearch::~TabuSearch()
+{
+
+}
 
 void TabuSearch::swapElements(int* path, int x, int y)
 {
@@ -6,7 +18,6 @@ void TabuSearch::swapElements(int* path, int x, int y)
     path[x] = path[y];
     path[y] = temp;
 }
-
 
 int* TabuSearch::getBestNeighbour(int* currentPath, Matrix* tabuList)
 {
@@ -22,7 +33,7 @@ int* TabuSearch::getBestNeighbour(int* currentPath, Matrix* tabuList)
         for (int second_node = first_node + 1; second_node < townAmount - 1; second_node)
         {   
             // Je¿eli zamiana nie jest zakazana
-            if (tabuList->at_element(first_node, second_node) == 0)
+            if (tabuList->at_element(currentPath[first_node], currentPath[second_node]) == 0)
             {
                 swapElements(tempPath, first_node, second_node);
                 tempPathCost = getPathCost(tempPath);
@@ -56,4 +67,26 @@ int TabuSearch::getPathCost(int* currentSolution)
     pathCost += townMatrix->at_element(currentSolution[townAmount - 2], 0);
 
     return pathCost;
+}
+
+void TabuSearch::startAlgorithm()
+{
+    Matrix* tabuList = new Matrix();
+    tabuList->initMatrix(townAmount, townAmount);
+    for (int iii = 0; iii < townAmount; iii++)
+        for (int jjj = 0; jjj < townAmount; jjj++)
+            tabuList->set_element(iii, jjj, 0);
+
+
+
+}
+
+void TabuSearch::printResult()
+{
+    cout << "\nFINAL COST: " << bestCost << "\nFINAL PATH: 0 ->";
+    for (int iii = 0; iii < townAmount - 1; iii++)
+    {
+        cout << bestPath[iii] << " -> ";
+    }
+    cout << " 0\n";
 }

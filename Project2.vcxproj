@@ -144,12 +144,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="SimulatedAnnealing.cpp" />
+    <ClCompile Include="TabuSearch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="SimulatedAnnealing.h" />
+    <ClInclude Include="TabuSearch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
