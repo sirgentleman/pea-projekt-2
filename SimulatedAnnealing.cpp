@@ -10,15 +10,20 @@ SimulatedAnnealing::SimulatedAnnealing(Matrix* inputMatrix, int townAmount)
     //defaults
     srand(time(NULL));
     initalTemp = 10000;
-    tempStop = 0.00000001;
     tempChange = 0.995;
     iterationTempChange = 20000;
+    stopTimeSec = 60;
 }
 
 SimulatedAnnealing::~SimulatedAnnealing()
 {
     delete[] bestPath;
     delete townMatrix;
+}
+
+void SimulatedAnnealing::setStopTime(int timeInSec)
+{
+    stopTimeSec = timeInSec;
 }
 
 int* SimulatedAnnealing::randomizeSolution()
@@ -80,28 +85,36 @@ int SimulatedAnnealing::getPathCost(int* currentSolution)
     return pathCost;
 }
 
-void SimulatedAnnealing::setInitalParams(double initalTemp, double tempStop, double tempChange, int iterationTempChange)
+void SimulatedAnnealing::setInitalParams(double tempChange, int iterationTempChange)
 {
-    this->initalTemp = initalTemp;
-    this->tempStop = tempStop;
     this->tempChange = tempChange;
     this->iterationTempChange = iterationTempChange;
 }
 
 void SimulatedAnnealing::startAlgorithm()
 {
+    time_t startTime = time(NULL);
+
     int* currentSolution = this->randomizeSolution();
     int solutionCost = this->getPathCost(currentSolution);
     bestCost = INT_MAX;
+    if (bestPath != nullptr)
+        delete[] bestPath;
     bestPath = new int[townAmount - 1];
 
-    double currentTemp = initalTemp;
+    double currentTemp = NULL;
 
-    while (currentTemp > tempStop)
+    while (true)
     {
 
         for (int iteration = 0; iteration < iterationTempChange; iteration++)
         {
+            if (time(NULL) >= startTime + stopTimeSec)
+            {
+                delete[] currentSolution;
+                return;
+            }
+
             if (solutionCost < bestCost)
             {
                 bestCost = solutionCost;
@@ -110,6 +123,9 @@ void SimulatedAnnealing::startAlgorithm()
             
             int* newSolution = this->findNewSolution(currentSolution);
             int newSolutionCost = this->getPathCost(newSolution);
+
+            if (currentTemp == NULL)
+                currentTemp = -abs((double)solutionCost - (double)newSolutionCost)/log(0.98);
 
             if (newSolutionCost < solutionCost || exp((solutionCost - newSolutionCost) / currentTemp) > rand())
             {

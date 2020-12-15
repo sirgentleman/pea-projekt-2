@@ -2,6 +2,7 @@
 #include "Matrix.h"
 #include "Algorithm.h"
 #include "SimulatedAnnealing.h"
+#include "TabuSearch.h"
 #include <string>
 
 using namespace std;
@@ -12,6 +13,7 @@ class Application
 	int townAmount;
 
 	SimulatedAnnealing* sa;
+	TabuSearch* ts;
 	
 public:
 

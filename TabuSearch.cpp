@@ -1,15 +1,41 @@
 #include "TabuSearch.h"
 #include <iostream>
+#include <time.h>
 
 TabuSearch::TabuSearch(Matrix* inputMatrix, int townAmount)
     : Algorithm(inputMatrix, townAmount)
 {
     tabuLifetime = 100;
+    maxIterations = 100000;
+    stopTimeSec = 120;
 }
 
 TabuSearch::~TabuSearch()
 {
 
+}
+
+int* TabuSearch::randomizeSolution()
+{
+    bool* isVisited = new bool[townAmount];
+    int* solution = new int[townAmount - 1];
+    for (int iii = 0; iii < townAmount - 1; iii++)
+        isVisited[iii] = false;
+
+    for (int iii = 0; iii < townAmount - 1; iii++)
+    {
+        int index;
+        do
+        {
+            index = (rand() % (townAmount - 1)) + 1;
+        } while (isVisited[index] == true);
+
+        solution[iii] = index;
+        isVisited[index] = true;
+    }
+
+    delete[] isVisited;
+    return solution;
 }
 
 void TabuSearch::swapElements(int* path, int x, int y)
@@ -30,7 +56,7 @@ int* TabuSearch::getBestNeighbour(int* currentPath, Matrix* tabuList)
 
     for (int first_node = 0; first_node < townAmount - 1; first_node++)
     {
-        for (int second_node = first_node + 1; second_node < townAmount - 1; second_node)
+        for (int second_node = first_node + 1; second_node < townAmount - 1; second_node++)
         {   
             // Je¿eli zamiana nie jest zakazana
             if (tabuList->at_element(currentPath[first_node], currentPath[second_node]) == 0)
@@ -50,7 +76,7 @@ int* TabuSearch::getBestNeighbour(int* currentPath, Matrix* tabuList)
             }
         }
     }
-
+    delete[] tempPath;
     tabuList->set_element(swapX, swapY, tabuLifetime);
     return bestFoundPath;
 }
@@ -69,6 +95,11 @@ int TabuSearch::getPathCost(int* currentSolution)
     return pathCost;
 }
 
+void TabuSearch::setStopTime(int timeInSec)
+{
+    stopTimeSec = timeInSec;
+}
+
 void TabuSearch::startAlgorithm()
 {
     Matrix* tabuList = new Matrix();
@@ -77,8 +108,43 @@ void TabuSearch::startAlgorithm()
         for (int jjj = 0; jjj < townAmount; jjj++)
             tabuList->set_element(iii, jjj, 0);
 
+    int* currentBest = randomizeSolution();
+    int currentBestValue = getPathCost(currentBest);
+    int* tempPath;
+    if (bestPath != nullptr)
+        delete[] bestPath;
+    bestPath = new int[townAmount - 1];
+    bestCost = currentBestValue;
 
+    time_t startTime = time(NULL);
 
+    for (int iii = 0; iii < maxIterations; iii++)
+    {
+        if (startTime + stopTimeSec <= time(NULL))
+            break;
+
+        tempPath = getBestNeighbour(currentBest, tabuList);
+        delete[] currentBest;
+        currentBest = tempPath;
+        currentBestValue = getPathCost(currentBest);
+
+        if (currentBestValue < bestCost)
+        {
+            copy(currentBest, currentBest + (townAmount - 1), bestPath);
+            bestCost = currentBestValue;
+        }
+
+        for (int iii = 0; iii < townAmount; iii++)
+        {
+            for (int jjj = 0; jjj < townAmount; jjj++)
+            {
+                int temp = tabuList->at_element(iii, jjj);
+                if (temp > 0)
+                    tabuList->set_element(iii, jjj, temp - 1);
+            }
+        }
+    }
+    delete[] currentBest;
 }
 
 void TabuSearch::printResult()

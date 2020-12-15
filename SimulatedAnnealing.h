@@ -5,9 +5,8 @@ class SimulatedAnnealing :
 {
 private:
     double initalTemp;
-    double tempStop;
     double tempChange;
-    
+    int stopTimeSec;
     int iterationTempChange;
 
     int* findNewSolution(int* currentSolution);
@@ -18,7 +17,8 @@ public:
     SimulatedAnnealing(Matrix* inputMatrix, int townAmount);
     ~SimulatedAnnealing();
 
-    void setInitalParams(double initalTemp, double tempStop, double tempChange, int iterationTempChange);
+    void setInitalParams(double tempChange, int iterationTempChange);
+    void setStopTime(int timeInSec);
 
     void startAlgorithm();
     void printResult();

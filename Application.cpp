@@ -15,6 +15,7 @@ Application::~Application()
 {
 	delete inputMatrix;
 	delete sa;
+	delete ts;
 }
 
 void Application::showMenu()
@@ -24,8 +25,9 @@ void Application::showMenu()
 		cout << "MENU GLOWNE\n";
 		cout << "1. Zaladuj plik testowy\n";
 		cout << "2. Wyswietl zaladowana macierz\n";
-		cout << "3. Uruchom algorytm\n";
-		cout << "4. Uruchom testy\n";
+		cout << "3. Zmien poczatkowe ustawienia SA\n";
+		cout << "4. Uruchom SA\n";
+		cout << "5. Uruchom TS\n";
 
 		int choice;
 		cin >> choice;
@@ -38,6 +40,8 @@ void Application::showMenu()
 			string fileName;
 			cin >> fileName;
 			this->loadTestFile(fileName);
+			sa = new SimulatedAnnealing(inputMatrix, townAmount);
+			ts = new TabuSearch(inputMatrix, townAmount);
 			break;
 		}
 		case 2:
@@ -47,14 +51,34 @@ void Application::showMenu()
 		}
 		case 3:
 		{
-			sa = new SimulatedAnnealing(inputMatrix, townAmount);
-			sa->startAlgorithm();
-			sa->printResult();
+			cout << "Podaj wspolczynnik zmiany temperatury:";
+			double tempChange;
+			cin >> tempChange;
+			cout << "Podaj liczbe iteracji w jednej temperaturze:";
+			int iteration;
+			cin >> iteration;
+			sa->setInitalParams(tempChange, iteration);
 			break;
 		}
 		case 4:
 		{
-			
+			cout << "Maksymalny czas wykonania: ";
+			int maxTime;
+			cin >> maxTime;
+			sa->setStopTime(maxTime);
+			sa->startAlgorithm();
+			sa->printResult();
+			break;
+		}
+		case 5:
+		{
+			cout << "Maksymalny czas wykonania: ";
+			int maxTime;
+			cin >> maxTime;
+			ts->setStopTime(maxTime);
+			ts->startAlgorithm();
+			ts->printResult();
+			break;
 		}
 		}
 	}
